@@ -1,0 +1,111 @@
+MDScreen:
+    name: "main"
+
+    MDTopAppBar:
+        title: "KyaNaDeApp"
+        pos_hint: {"top": 1}
+        elevation: 4
+
+    ScrollView:
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            spacing: dp(15)
+            adaptive_height: True
+            size_hint_y: None
+
+            MDLabel:
+                id: mode_label
+                text: "Mode: Offline"
+                halign: "center"
+                font_style: "H5"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDRaisedButton:
+                text: "Switch Mode"
+                pos_hint: {"center_x": 0.5}
+                on_release: app.switch_mode()
+
+            # ======== OFFLINE ONLY COMPONENTS =========
+            BoxLayout:
+                id: offline_controls
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(10)
+                adaptive_height: True
+
+                MDRaisedButton:
+                    text: "Play Offline Sample"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: app.play_sample_song()
+
+                MDLabel:
+                    text: "🎵 List Lagu Offline 🎵"
+                    halign: "center"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                RecycleView:
+                    id: rv_song_list
+                    viewclass: "MDFlatButton"
+                    scroll_type: ['bars', 'content']
+                    bar_width: dp(10)
+                    size_hint_y: None
+                    height: dp(300)
+
+                    RecycleBoxLayout:
+                        default_size: None, dp(56)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        orientation: 'vertical'
+                        adaptive_height: True
+            # ========== END OFFLINE CONTROLS ==========
+
+            # ======== ONLINE ONLY COMPONENTS =========
+            BoxLayout:
+                id: online_controls
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(10)
+                adaptive_height: True
+
+                MDLabel:
+                    id: status_label
+                    text: ""
+                    halign: "center"
+                    theme_text_color: "Secondary"
+
+                MDTextField:
+                    id: online_search_input
+                    hint_text: "Search YouTube..."
+                    mode: "rectangle"
+                    size_hint_x: 0.9
+                    pos_hint: {"center_x": 0.5}
+
+                MDRaisedButton:
+                    text: "Play from YouTube"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: app.search_and_play_online(online_search_input.text)
+
+                MDRaisedButton:
+                    text: "Stop Online Playback"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: app.stop_online()
+                    
+                MDRaisedButton:
+                    id: pause_resume_button
+                    text: "Pause"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: app.toggle_pause_resume()
+
+                MDLabel:
+                    id: current_song_label
+                    text: "Tidak ada lagu aktif"
+                    halign: "center"
+                    theme_text_color: "Secondary"
+
+            # ========== END ONLINE CONTROLS ==========
