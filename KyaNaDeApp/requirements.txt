@@ -1,0 +1,4 @@
+kivymd
+kivy
+yt-dlp
+ffpyplayer
