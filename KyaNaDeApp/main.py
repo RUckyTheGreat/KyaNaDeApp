@@ -1,73 +1,80 @@
-from kivy.lang import Builder
-from kivymd.app import MDApp
-from kivy.core.audio import SoundLoader
-import os
+MDScreen:
+    MDBoxLayout:
+        orientation: "vertical"
 
-from player.online_player import OnlinePlayer
-from search.youtube_search import search_youtube
+        MDTopAppBar:
+            title: "🎧 KyaNaDeApp"
+            elevation: 4
+            md_bg_color: app.theme_cls.primary_color
 
-class MainApp(MDApp):
-    def build(self):
-        root = Builder.load_file("ui/main.kv")
+        ScrollView:
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                padding: 20
+                spacing: 20
 
-        # Inisialisasi pemutar YouTube
-        self.online_player = OnlinePlayer()
+                MDLabel:
+                    id: mode_label
+                    text: "Mode: Offline"
+                    halign: "center"
+                    theme_text_color: "Primary"
+                    font_style: "H6"
 
-        # Sembunyikan kontrol online di awal
-        root.ids.online_controls.opacity = 0
-        root.ids.online_controls.disabled = True
-        return root
+                MDRaisedButton:
+                    text: "🔁 Ganti Mode"
+                    on_release: app.switch_mode()
+                    pos_hint: {"center_x": 0.5}
 
-    def switch_mode(self):
-        current_mode = self.root.ids.mode_label.text
-        offline_controls = self.root.ids.offline_controls
-        online_controls = self.root.ids.online_controls
+                MDBoxLayout:
+                    id: offline_controls
+                    orientation: "vertical"
+                    spacing: 10
+                    adaptive_height: True
 
-        if "Offline" in current_mode:
-            self.root.ids.mode_label.text = "Mode: Online"
-            offline_controls.opacity = 0
-            offline_controls.disabled = True
-            online_controls.opacity = 1
-            online_controls.disabled = False
-        else:
-            self.root.ids.mode_label.text = "Mode: Offline"
-            offline_controls.opacity = 1
-            offline_controls.disabled = False
-            online_controls.opacity = 0
-            online_controls.disabled = True
+                    MDRaisedButton:
+                        text: "▶️ Putar Lagu Offline"
+                        on_release: app.play_sample_song()
+                        pos_hint: {"center_x": 0.5}
 
-    def play_sample_song(self):
-        path = os.path.join("songs", "lagu1.mp3")
-        if os.path.exists(path):
-            sound = SoundLoader.load(path)
-            if sound:
-                sound.play()
-        else:
-            print("File tidak ditemukan:", path)
+                MDBoxLayout:
+                    id: online_controls
+                    orientation: "vertical"
+                    spacing: 10
+                    adaptive_height: True
+                    opacity: 0
+                    disabled: True
 
-    def search_and_play_online(self, query):
-        if not query.strip():
-            print("Masukkan URL atau Judul YouTube terlebih dahulu!")
-            return
+                    MDTextField:
+                        id: search_input
+                        hint_text: "Masukkan URL atau Judul YouTube"
 
-        def update_status(status):
-            print(status)
-            self.root.ids.status_label.text = status
-            self.root.ids.current_song_label.text = status
-            self.root.ids.pause_resume_button.text = "Pause"  # reset button setiap ganti lagu
+                    MDRaisedButton:
+                        text: "🔍 Cari & Putar"
+                        on_release: app.search_and_play_online(search_input.text)
+                        pos_hint: {"center_x": 0.5}
 
-        print(f"🔎 Mencoba memutar: {query}")
-        self.online_player.play(query, callback=update_status)
+                    MDRaisedButton:
+                        id: pause_resume_button
+                        text: "Pause"
+                        on_release: app.toggle_pause_resume()
+                        pos_hint: {"center_x": 0.5}
 
-    def stop_online(self):
-        self.online_player.stop()
+                    MDRaisedButton:
+                        text: "⏹️ Stop"
+                        on_release: app.stop_online()
+                        pos_hint: {"center_x": 0.5}
 
-    def toggle_pause_resume(self):
-        if self.online_player.player:
-            self.online_player.pause_resume()
-            is_playing = self.online_player.is_playing()
-            self.root.ids.pause_resume_button.text = "Pause" if is_playing else "Resume"
+                MDLabel:
+                    id: current_song_label
+                    text: "Lagu yang sedang diputar akan tampil di sini"
+                    halign: "center"
+                    theme_text_color: "Secondary"
+                    font_style: "Body1"
 
-
-if __name__ == "__main__":
-    MainApp().run()
+                MDLabel:
+                    id: status_label
+                    text: "Status pemutaran"
+                    halign: "center"
+                    theme_text_color: "Secondary"
+                    font_style: "Body2"
