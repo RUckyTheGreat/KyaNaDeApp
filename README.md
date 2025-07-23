@@ -6,6 +6,7 @@
 
 ---
 
+![me](https://c.tenor.com/oXkW9LLAGG8AAAAC/tenor.gif)
 ## ✨ Fitur Utama
 
 - 🎵 **Mode Offline**:
